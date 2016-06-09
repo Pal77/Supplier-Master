@@ -1,4 +1,3 @@
-
 var express = require('express');
 var app = express();
 var path = require('path'); //Use the path to tell where find the .ejs files
@@ -10,6 +9,7 @@ var search = require('netsuite-search')(settings);
 var id=null;
 var vendor_name=null;
 
+app.set('port', (process.env.PORT || 5000));
 
 app.use(require('body-parser').urlencoded({
     extended: true
@@ -23,11 +23,11 @@ var formidable = require('formidable');
 //module.exports.rec_type = rec_type;
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views')); // here the .ejs files is in views folders
+app.set('views', __dirname + '/views'); // here the .ejs files is in views folders
 app.set('view engine', 'ejs'); //tell the template engine
 
 
-app.use( express.static( "public" ) );
+app.use( express.static(__dirname + '/public' ) );
 
 var router = express.Router();
 
@@ -38,12 +38,18 @@ var db = new SQL.Database(filebuffer);
 var buffer = new Buffer(data);
 fs.writeFileSync("supplier_master.db", buffer); */
 
-/*get home page*/
-app.get('/index', function(req,res,next){
+app.get('/', function(req,res,next){
 	console.log('in index get ejs');
 	
 	res.render('index',{});
 });
+
+/*get home page*/
+/*app.get('/index', function(req,res,next){
+	console.log('in index get ejs');
+	
+	res.render('index',{});
+});*/
 
 
 /* GET home page. */
@@ -173,14 +179,17 @@ else
 }
 });
 
-var server = app.listen(3000, function() {
-  var host = server.address().address;
-  var port = server.address().port;
-
-  console.log('Example app listening at http://%s:%s', host, port);
-
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
 });
 
+/*
+var server = app.listen(5000, function() {
+  var host = server.address().address;
+  var port = server.address().port;
+  console.log('Example app listening at http://%s:%s', host, port);
+});
+*/
 app.get('/login', function(req,res,next){
 	console.log('in login get ejs');
 	
